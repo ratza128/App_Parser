@@ -1,0 +1,8 @@
+struct Nod, *ANod{
+  char* radacina;
+  struct ANod stg;
+  struct ANod drp;
+  double start, end;
+  char variable;
+  double rez; //Optional
+}

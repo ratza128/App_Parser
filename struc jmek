@@ -1,11 +1,12 @@
-struct Nod, *ANod{
+struct Nod{
   char* radacina;
-  struct ANod stg;
-  struct ANod drp;
+  struct Nod *stg;
+  struct Nod *drp;
   double start, end;
   char variable;
   double rez; //Optional
-}
+};
+//asa pare mai ok,,cel putin la mine
 
 
 https://guides.github.com/activities/hello-world/

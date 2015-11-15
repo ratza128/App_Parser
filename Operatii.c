@@ -1,5 +1,6 @@
 //Implementare Add,Sub,Mult,Divi,Sqrt,Pow
 // Am presupus ca PrelucrareArbore are parametru asa
+// gcc fisier -lm -o output ca sa mearga pow si sqrt
 
 /*
 

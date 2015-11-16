@@ -2,14 +2,35 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-struct Nod{
-  char* radacina;
-  struct Nod *stg;
-  struct Nod *drp;
-  double start, end;
-  char variable;
-  double rez; //Optional
-};
+
+
+typedef char* TInfo;
+
+typedef struct nod 
+{ TInfo info;
+  struct nod*st, *dr;
+  int rezultat;
+  char var;
+  int start, end;
+} TNod, *TArb, **AArb;
+
+
+
+typedef struct VctStr             /* Structura de string-uri */
+{
+   char* str; 
+}VctStr;
+
+typedef TArb VctArb[50];        /* Vector de arbori */
+
+
+typedef struct Tablea          /* Structura pentru tabela cu numele variabilei si valoarea acesteia */
+{
+  char* nume;
+  int val;
+} Tabela;
+
+
 
 double Add(struct Nod *stg,struct Nod *drp);
 

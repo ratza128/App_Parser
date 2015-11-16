@@ -20,6 +20,8 @@ double Add(struct TNod *stg,struct TNod *drp)
 	a=PrelucrareArbore(stg);
 	b=PrelucrareArbore(drp);
 	
+	printf("%lf + %lf\n", a, b);
+
 	return a+b;
 
 }
@@ -129,9 +131,29 @@ char *str_replace(char *orig, char *rep, char *with) {
     return result;
 }
 
+
+void ReplaceChars(struct TNod *lel, char* rep, char* with){
+	printf("Hello");
+	char* a = lel->info;
+	printf("%s\n",a);
+	if(strcmp(a, rep)==0){
+		memset(lel->info,0,sizeof(lel->info));
+		strcpy(lel->info, with);
+		return;
+	}
+
+	if(strcmp(a,"+")==0 || strcmp(a,"-")==0 || strcmp(a,"*")==0 || strcmp(a,"/")==0 || strcmp(a,"sqrt")==0 || strcmp(a,"pow")==0){
+		ReplaceChars(lel->st,rep,with);
+		ReplaceChars(lel->dr,rep,with);
+	}else if(strcmp(a,"sum")==0 || strcmp(a,"prod")==0){
+		ReplaceChars(lel->st,rep,with);
+	}
+}
+
+
 double Sum(struct TNod *radacina){
-	struct TNod* stg = radacina->stg;
-	struct TNod* drp = radacina->drp;
+	struct TNod* stg = radacina->st;
+	struct TNod* drp = radacina->dr;
 	
 	double start = radacina->start;
 	double end = radacina->end;
@@ -143,9 +165,15 @@ double Sum(struct TNod *radacina){
 	double sum = 0;
 	for (i=start; i<=end; i++){
 		char* rep = &variab;
+		char buffer[20];
+		itoa(i,buffer,10);
 		
+		//Clonez lel
+
+		
+
 		//Inlcouire variabila cu valoarea lui i
-		//str_replace(orig, rep, with); 
+		//ReplaceChars(radacina, rep, buffer)
 		//sum += PrelucrareArbore(stg);
 	}
 	
@@ -153,8 +181,8 @@ double Sum(struct TNod *radacina){
 }
 
 double Prod(struct TNod *radacina){
-	struct TNod* stg = radacina->stg;
-	struct TNod* drp = radacina->drp;
+	struct TNod* stg = radacina->st;
+	struct TNod* drp = radacina->dr;
 	
 	double start = radacina->start;
 	double end = radacina->end;
@@ -166,9 +194,16 @@ double Prod(struct TNod *radacina){
 	double prod = 1;
 	for (i=start; i<=end; i++){
 		char* rep = &variab;
+		char buffer[20];
+		itoa(i,buffer,10);
 		
+		//Clonez lel
+
+		
+		
+
 		//Inlcouire variabila cu valoarea lui i
-		//str_replace(orig, rep, with); 
+		//ReplaceChars(radacina, rep, buffer)
 		//prod *= PrelucrareArbore(stg);
 	}
 	
@@ -180,23 +215,25 @@ double PrelucrareArbore(struct TNod *lel){
 	char * a=lel->info;
 	double rez = 0;
 	if(strcmp(a,"+")==0){
-		rez=Add(lel->stg,lel->drp);
+		rez=Add(lel->st,lel->dr);
+		printf("%lf\n",rez);
 	}else if(strcmp(a,"-")==0){
-		rez=Sub(lel->stg,lel->drp);
+		rez=Sub(lel->st,lel->dr);
 	}else if(strcmp(a,"*")==0){
-		rez=Mult(lel->stg, lel->drp);
+		rez=Mult(lel->st, lel->dr);
 	}else if(strcmp(a,"/")==0){
-		rez=Divi(lel->stg, lel->drp);
+		rez=Divi(lel->st, lel->dr);
 	}else if(strcmp(a,"sum")==0){
 		rez = Sum(lel);
 	}else if(strcmp(a,"prod")==0){
 		rez = Prod(lel);
 	}else if(strcmp(a,"sqrt")==0){
-		rez = SqrtCalc(lel->stg,lel->drp);
+		rez = SqrtCalc(lel->st,lel->dr);
 	}else if(strcmp(a,"pow")==0){
-		rez = PowCalc(lel->stg, lel->drp);
+		rez = PowCalc(lel->st, lel->dr);
 	}else{
 		rez=(double)atoi(a);
+		printf("%s\n",a);
 	}
 	return rez;
 }

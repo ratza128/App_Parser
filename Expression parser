@@ -1,10 +1,11 @@
 #include <stdio.h>
-#include <conio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
+
+#include "Operatii.h"
 
 #ifndef ARBORE_BINAR
 #define ARBORE_BINAR
@@ -13,30 +14,6 @@
 #define Ordin(a) (((a)->st != NULL ) + ((a)->dr != NULL))
 
 
-
-typedef char* TInfo;
-
-typedef struct nod 
-{ TInfo info;
-  struct nod*st, *dr;
-  int rezultat;
-  char var;
-  int inc, end;
-} TNod, *TArb, **AArb;
-
-typedef struct VctStr             /* Structura de string-uri */
-{
-   char* str; 
-}VctStr;
-
-typedef TArb VctArb[50];        /* Vector de arbori */
-
-
-typedef struct Tablea          /* Structura pentru tabela cu numele variabilei si valoarea acesteia */
-{
-  char* nume;
-  int val;
-} Tabela;
 
 /* Cateva functii din laboratoare */
 
@@ -151,7 +128,7 @@ void ConstrArbPref (TArb *a,VctStr sir[40],int *p,int *k)   /* Functie de constr
            return;
         ((*a)->info)=sir[(*p)].str;
         (*p)++;
-        ((*a)->inc)=atoi(sir[(*p)].str);
+        ((*a)->start)=atoi(sir[(*p)].str);
         (*p)++;
         ((*a)->end)=atoi(sir[(*p)].str);
 	    (*p)++;
@@ -175,7 +152,7 @@ void ConstrArbPref (TArb *a,VctStr sir[40],int *p,int *k)   /* Functie de constr
         ConstrArbPref(&((*a)),sir,p,k);
       }
    if(*p == *k)                                        /* In cazul in care p devine egal cu lungimea sirului,returnam functia */
-   /* Motivul pentru care am folosit acest if este faptul ca functia nu functiona cum trebuie fara ea , recunosc ca la inceput a fost
+   /* Motivul pentru care am folosit acest if este faptul ca functia nu functiona cum trebuie fara ea , recunosc ca la starteput a fost
       "lucky guess", intelegand pe urma folosinta ei si anume : Functia se oprea ( din cate mi-am dat seama ) la ultimul caracter si nu 
       primea functia recursiva rezultat corect */
          return;
@@ -191,7 +168,7 @@ void ConstrArbPref (TArb *a,VctStr sir[40],int *p,int *k)   /* Functie de constr
 
 TArb ConstrNod(TInfo x, TArb s, TArb d) /* -> adresa nod (cu informatia x, 
 				fiu stanga s, fiu dreapta d) sau NULL in caz de eroare */
-{ TArb aux = (TArb)malloc (sizeof(TNod));  /* incearca alocare spatiu */
+{ TArb aux = (TArb)malloc (sizeof(TNod));  /* startearca alocare spatiu */
   if (!aux) return NULL;                   /* spatiu insuficient */
   aux->info = x; aux->st = s; aux->dr = d; /* actualizeaza campurile nodului */
   return aux;                              /* intoarce adresa nodului */
@@ -262,7 +239,6 @@ int main(int argc, char*argv[])
   f=fopen(argv[1],"rt");               /*Deschidere fisier si verificare */
   if (!f)
      {printf("\nNu s-a putut deschide fisierul!");
-      getch();
       return 0;
      }
   else
@@ -387,7 +363,6 @@ int main(int argc, char*argv[])
        arbcon=0;
         }   
   
-  getch();
   return 1;
 }   
      

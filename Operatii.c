@@ -13,7 +13,7 @@
 
 #include "Operatii.h"
 
-double Add(struct Nod *stg,struct Nod *drp)
+double Add(struct TNod *stg,struct TNod *drp)
 {
 	double a,b;
 
@@ -25,7 +25,7 @@ double Add(struct Nod *stg,struct Nod *drp)
 }
 
 
-double Sub(struct Nod *stg,struct Nod *drp)
+double Sub(struct TNod *stg,struct TNod *drp)
 {
 	double a,b;
 
@@ -36,7 +36,7 @@ double Sub(struct Nod *stg,struct Nod *drp)
 
 }
 
-double Mult(struct Nod *stg,struct Nod *drp)
+double Mult(struct TNod *stg,struct TNod *drp)
 {
 	double a,b;
 
@@ -48,7 +48,7 @@ double Mult(struct Nod *stg,struct Nod *drp)
 }
 
 
-double Divi(struct Nod *stg,struct Nod *drp)
+double Divi(struct TNod *stg,struct TNod *drp)
 {
 	double a,b;
 
@@ -61,7 +61,7 @@ double Divi(struct Nod *stg,struct Nod *drp)
 
 
 //ordin 2 
-double SqrtCalc(struct Nod *stg,struct Nod *drp)
+double SqrtCalc(struct TNod *stg,struct TNod *drp)
 {
 	double a,b;
 
@@ -74,7 +74,7 @@ double SqrtCalc(struct Nod *stg,struct Nod *drp)
 
 
 //stanga este baza iar drp este puterea
-double PowCalc(struct Nod *stg,struct Nod *drp)
+double PowCalc(struct TNod *stg,struct TNod *drp)
 {
 	double a,b;
 
@@ -108,7 +108,7 @@ char *str_replace(char *orig, char *rep, char *with) {
         ins = tmp + len_rep;
     }
 
-    // first time through the loop, all the variable are set correctly
+    // first time through the loop, all the var are set correctly
     // from here on,
     //    tmp points to the end of the result string
     //    ins points to the next occurrence of rep in orig
@@ -129,14 +129,14 @@ char *str_replace(char *orig, char *rep, char *with) {
     return result;
 }
 
-double Sum(struct Nod *radacina){
-	struct Nod* stg = radacina->stg;
-	struct Nod* drp = radacina->drp;
+double Sum(struct TNod *radacina){
+	struct TNod* stg = radacina->stg;
+	struct TNod* drp = radacina->drp;
 	
 	double start = radacina->start;
 	double end = radacina->end;
 	
-	char variab = radacina->variable;
+	char variab = radacina->var;
 
 	int i = 0;
 	//Iteram de la start la end si prelucram expresia
@@ -152,14 +152,14 @@ double Sum(struct Nod *radacina){
 	return sum;
 }
 
-double Prod(struct Nod *radacina){
-	struct Nod* stg = radacina->stg;
-	struct Nod* drp = radacina->drp;
+double Prod(struct TNod *radacina){
+	struct TNod* stg = radacina->stg;
+	struct TNod* drp = radacina->drp;
 	
 	double start = radacina->start;
 	double end = radacina->end;
 	
-	char variab = radacina->variable;
+	char variab = radacina->var;
 
 	int i = 0;
 	//Iteram de la start la end si prelucram expresia
@@ -175,9 +175,9 @@ double Prod(struct Nod *radacina){
 	return prod;
 }
 
-double PrelucrareArbore(struct Nod *lel){
+double PrelucrareArbore(struct TNod *lel){
 
-	char * a=lel->radacina;
+	char * a=lel->info;
 	double rez = 0;
 	if(strcmp(a,"+")==0){
 		rez=Add(lel->stg,lel->drp);
@@ -199,23 +199,6 @@ double PrelucrareArbore(struct Nod *lel){
 		rez=(double)atoi(a);
 	}
 	return rez;
-}
-
-
-
-
-int main(int argc,char *argv[])
-{
-struct Nod a;
-struct Nod b;
-
-a.radacina=argv[1];
-b.radacina=argv[2];
-
-//printf("%lf %lf %lf %lf %lf %lf \n",Add(&a,&b),Sub(&a,&b),Mult(&a,&b),Divi(&a,&b),Sqrt_(&a,&b),Pow_(&a,&b));
-
-
-return 0;
 }
 
 

@@ -5,7 +5,7 @@
 #include <ctype.h>
 #include <time.h>
 
-#include "Operatii.h"
+#include "Operatii.c"
 
 #ifndef ARBORE_BINAR
 #define ARBORE_BINAR

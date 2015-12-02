@@ -95,8 +95,6 @@ void AfiArb(TArb r) /*- afiseaza arborele r -*/
 
 void ConstrArbPref (TArb *a,VctStr sir[40],int *p,int *k)   /* Functie de construire a arborului pentru ecuatii prefixate */
 {      
-printf("Sir %s\n", sir[(*p)]);
-	
 	if ( (ispunct(sir[(*p)].str[0]) ) 
    		&& (sir[(*p)].str[0] != '<' ) 
 		&& (sir[(*p)].str[0] != '>' ) ) /* Daca s-a gasit operator */

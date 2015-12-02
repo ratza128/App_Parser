@@ -66,7 +66,7 @@ double SqrtCalc(struct TNod *stg,struct TNod *drp)
 	double a,b;
 
 	//a=PrelucrareArbore(stg);
-	b=PrelucrareArbore(drp);
+	b=PrelucrareArbore(stg);
 	
 	return sqrt(b);
 

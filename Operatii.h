@@ -9,7 +9,7 @@ typedef char* TInfo;
 typedef struct TNod 
 { TInfo info;
   struct TNod *st, *dr;
-  int rezultat;
+  long int rezultat;
   char var;
   int start, end;
 } TNod, *TArb, **AArb;

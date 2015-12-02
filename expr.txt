@@ -1,1 +1,1 @@
-< + 123 < prod 1 4 i < + 1 i > > >
+< sqrt < sum 1 10 i < sum 1 5 j < + i j > > > 2 >

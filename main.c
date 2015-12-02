@@ -95,7 +95,8 @@ void AfiArb(TArb r) /*- afiseaza arborele r -*/
 
 void ConstrArbPref (TArb *a,VctStr sir[40],int *p,int *k)   /* Functie de construire a arborului pentru ecuatii prefixate */
 {      
-   if ( (ispunct(sir[(*p)].str[0]) ) 
+	
+	if ( (ispunct(sir[(*p)].str[0]) ) 
    		&& (sir[(*p)].str[0] != '<' ) 
 		&& (sir[(*p)].str[0] != '>' ) ) /* Daca s-a gasit operator */
       { 
@@ -108,7 +109,7 @@ void ConstrArbPref (TArb *a,VctStr sir[40],int *p,int *k)   /* Functie de constr
         ConstrArbPref(&((*a))->dr,sir,p,k);            /* Construim subarbore drept */
         return;
       }
-      
+
     if(strcmp(sir[(*p)].str, "sqrt") == 0
 		|| strcmp(sir[(*p)].str, "pow") == 0 ){
     	(*a)=(TNod*)malloc(sizeof(TNod));              /* Alocam spatiu pentru un nod si il completam */
@@ -128,17 +129,19 @@ void ConstrArbPref (TArb *a,VctStr sir[40],int *p,int *k)   /* Functie de constr
            return;
         ((*a)->info)=sir[(*p)].str;
         (*p)++;
-        ((*a)->start)=atoi(sir[(*p)].str);
+        ((*a)->start)=atol(sir[(*p)].str);
         (*p)++;
-        ((*a)->end)=atoi(sir[(*p)].str);
+        ((*a)->end)=atol(sir[(*p)].str);
 	    (*p)++;
-        ((*a)->var)=sir[(*p)].str;
-        (*p)++;
-		ConstrArbPref(&((*a))->st,sir,p,k);            
+        ((*a)->var)=sir[(*p)].str[0];
+		ConstrArbPref(&((*a))->st,sir,p,k); 
+
 	    ConstrArbPref(&((*a))->dr,sir,p,k);
 		return;
     }
     
+ 
+
     if ( isalnum(sir[(*p)].str[0]) )                   /* Daca s-a gasit nume de variabila */
       {
        (*a)=ConstrFr( (sir[(*p)].str));                /* Construim frunza */
@@ -342,19 +345,14 @@ int main(int argc, char*argv[])
                         if ( (ispunct(sirn[i2].str[0] )) && (sirn[i2].str[0] != '+' ) && (sirn[i2].str[0] != '-' ) && (sirn[i2].str[0] != '*' ) && (sirn[i2].str[0] != '/' )  )
                             i2++;
                         else
-                                if (( sirn[i2].str[0] == '+' ) || (sirn[i2].str[0] == '-' ) || (sirn[i2].str[0] == '*' ) || (sirn[i2].str[0] == '/' ) )
+                                if (( sirn[i2].str[0] == '+' ) || (sirn[i2].str[0] == '-' ) || (sirn[i2].str[0] == '*' ) || (sirn[i2].str[0] == '/' ) || ( strcmp( sirn[i2].str, "sqrt") == 0 ) || ( strcmp( sirn[i2].str, "pow") == 0 ) || ( strcmp( sirn[i2].str, "sum") == 0 ) || ( strcmp( sirn[i2].str, "prod") == 0 ) )
                                   {
                                    ConstrArbPref(&(varb[t]),sirn,&p,&k);
-
                                    printf("\n");
                                    AfiArb(varb[t]);
-									
-									//ReplaceChars(varb[t], "i", "123456"); 
-									AfiArb(varb[t]);
-
-									double rezultat = PrelucrareArbore(varb[t]);
-									printf("Rezultat %lf\n",rezultat);
+                                   printf("%lf\n",PrelucrareArbore(varb[t]));
                                    t++;
+                                   
                                    arbcon=1;
                                    break;
                                    }    
@@ -368,12 +366,10 @@ int main(int argc, char*argv[])
              k=0;
           printf("\n\n\n--------------------------------\n\n\n");
        arbcon=0;
-        }  
-
-
+        }   
   
   return 1;
 }   
      
      
-     
+    

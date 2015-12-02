@@ -19,8 +19,6 @@ double Add(struct TNod *stg,struct TNod *drp)
 
 	a=PrelucrareArbore(stg);
 	b=PrelucrareArbore(drp);
-	
-	printf("%lf + %lf\n", a, b);
 
 	return a+b;
 
@@ -133,9 +131,9 @@ char *str_replace(char *orig, char *rep, char *with) {
 
 
 void ReplaceChars(struct TNod *lel, char* rep, char* with){
-	printf("Hello");
+	
 	char* a = lel->info;
-	printf("%s\n",a);
+	
 	if(strcmp(a, rep)==0){
 		memset(lel->info,0,sizeof(lel->info));
 		strcpy(lel->info, with);
@@ -146,10 +144,36 @@ void ReplaceChars(struct TNod *lel, char* rep, char* with){
 		ReplaceChars(lel->st,rep,with);
 		ReplaceChars(lel->dr,rep,with);
 	}else if(strcmp(a,"sum")==0 || strcmp(a,"prod")==0){
-		ReplaceChars(lel->st,rep,with);
+		ReplaceChars(lel->dr,rep,with);
 	}
 }
 
+struct TNod* ClonareArb(struct TNod *radacina){
+
+	if(radacina == NULL) return NULL;
+
+	struct TNod *newNode = NULL;
+	
+	newNode = (TArb)malloc (sizeof(TNod));
+	if(!newNode) return NULL;
+	
+	char* msg = (char*)malloc(sizeof(char) * 15);
+	strcpy(msg,radacina->info);
+	newNode->info = msg;
+	
+	newNode->rezultat = radacina->rezultat;
+	newNode->var = radacina->var;
+	newNode->start = radacina->start;
+	newNode->end = radacina->end;
+	
+	if(radacina->st != NULL)
+		(newNode->st) = ClonareArb(radacina->st);
+	
+	if(radacina->dr !=NULL)
+		(newNode->dr) = ClonareArb(radacina->dr);
+
+	return newNode;
+}
 
 double Sum(struct TNod *radacina){
 	struct TNod* stg = radacina->st;
@@ -159,24 +183,30 @@ double Sum(struct TNod *radacina){
 	double end = radacina->end;
 	
 	char variab = radacina->var;
+	
 
 	int i = 0;
 	//Iteram de la start la end si prelucram expresia
 	double sum = 0;
 	for (i=start; i<=end; i++){
-		char* rep = &variab;
+		char* rep = malloc(sizeof(char));
+		*rep = variab;
 		char buffer[20];
-		itoa(i,buffer,10);
+		
+		snprintf(buffer, 20,"%i",i);
+		
+		//itoa(i,buffer,10);
 		
 		//Clonez lel
-
+		struct TNod* aux = NULL;
+		aux = ClonareArb(radacina);
 		
 
 		//Inlcouire variabila cu valoarea lui i
-		//ReplaceChars(radacina, rep, buffer)
-		//sum += PrelucrareArbore(stg);
+		ReplaceChars(aux, rep, buffer);
+		free(rep);
+		sum += PrelucrareArbore(aux->dr);
 	}
-	
 	return sum;
 }
 
@@ -193,18 +223,21 @@ double Prod(struct TNod *radacina){
 	//Iteram de la start la end si prelucram expresia
 	double prod = 1;
 	for (i=start; i<=end; i++){
-		char* rep = &variab;
+		char* rep = malloc(sizeof(char));
+		*rep = variab;
 		char buffer[20];
-		itoa(i,buffer,10);
 		
-		//Clonez lel
+		snprintf(buffer, 20,"%i",i);
 
-		
+		//Clonez lel
+		struct TNod* aux = NULL;
+		aux = ClonareArb(radacina);
 		
 
 		//Inlcouire variabila cu valoarea lui i
-		//ReplaceChars(radacina, rep, buffer)
-		//prod *= PrelucrareArbore(stg);
+		ReplaceChars(aux, rep, buffer);
+		free(rep);
+		prod *= PrelucrareArbore(aux->dr);
 	}
 	
 	return prod;
@@ -216,7 +249,6 @@ double PrelucrareArbore(struct TNod *lel){
 	double rez = 0;
 	if(strcmp(a,"+")==0){
 		rez=Add(lel->st,lel->dr);
-		printf("%lf\n",rez);
 	}else if(strcmp(a,"-")==0){
 		rez=Sub(lel->st,lel->dr);
 	}else if(strcmp(a,"*")==0){
@@ -233,7 +265,6 @@ double PrelucrareArbore(struct TNod *lel){
 		rez = PowCalc(lel->st, lel->dr);
 	}else{
 		rez=(double)atoi(a);
-		printf("%s\n",a);
 	}
 	return rez;
 }

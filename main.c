@@ -5,7 +5,7 @@
 #include <ctype.h>
 #include <time.h>
 
-#include "Operatii.c"
+#include "Operatii.h"
 
 #ifndef ARBORE_BINAR
 #define ARBORE_BINAR
@@ -95,6 +95,10 @@ void AfiArb(TArb r) /*- afiseaza arborele r -*/
 
 void ConstrArbPref (TArb *a,VctStr sir[40],int *p,int *k)   /* Functie de construire a arborului pentru ecuatii prefixate */
 {      
+<<<<<<< HEAD
+=======
+printf("Sir %\n", sir[(*p)]);
+>>>>>>> a30868530205708adfa4f774ad4f1e4fa4ac2780
 	
 	if ( (ispunct(sir[(*p)].str[0]) ) 
    		&& (sir[(*p)].str[0] != '<' ) 
@@ -133,7 +137,11 @@ void ConstrArbPref (TArb *a,VctStr sir[40],int *p,int *k)   /* Functie de constr
         (*p)++;
         ((*a)->end)=atol(sir[(*p)].str);
 	    (*p)++;
+<<<<<<< HEAD
         ((*a)->var)=sir[(*p)].str[0];
+=======
+        ((*a)->var)=sir[(*p)].str;
+>>>>>>> a30868530205708adfa4f774ad4f1e4fa4ac2780
 		ConstrArbPref(&((*a))->st,sir,p,k); 
 
 	    ConstrArbPref(&((*a))->dr,sir,p,k);
@@ -350,7 +358,10 @@ int main(int argc, char*argv[])
                                    ConstrArbPref(&(varb[t]),sirn,&p,&k);
                                    printf("\n");
                                    AfiArb(varb[t]);
+<<<<<<< HEAD
                                    printf("%lf\n",PrelucrareArbore(varb[t]));
+=======
+>>>>>>> a30868530205708adfa4f774ad4f1e4fa4ac2780
                                    t++;
                                    
                                    arbcon=1;

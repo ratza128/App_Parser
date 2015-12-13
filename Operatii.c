@@ -148,6 +148,18 @@ void ReplaceChars(struct TNod *lel, char* rep, char* with){
 	}
 }
 
+void FreeArb(struct TNod *radacina){
+	if(radacina == NULL) return;
+
+	FreeArb(radacina->st);
+	FreeArb(radacina->dr);
+	if(radacina->msg != NULL)
+		free(radacina->msg);
+	radacina->info = NULL;
+
+	free(radacina);
+}
+
 struct TNod* ClonareArb(struct TNod *radacina){
 
 	if(radacina == NULL) return NULL;

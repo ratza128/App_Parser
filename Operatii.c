@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+//#include <omp.h>
 
 #include "Operatii.h"
 
@@ -133,12 +134,14 @@ char *str_replace(char *orig, char *rep, char *with) {
 void ReplaceChars(struct TNod *lel, char* rep, char* with){
 	
 	char* a = lel->info;
-	
+//	#pragma omp single
+//	{
 	if(strcmp(a, rep)==0){
 		memset(lel->info,0,sizeof(lel->info));
 		strcpy(lel->info, with);
 		return;
 	}
+//	}
 
 	if(strcmp(a,"+")==0 || strcmp(a,"-")==0 || strcmp(a,"*")==0 || strcmp(a,"/")==0 || strcmp(a,"sqrt")==0 || strcmp(a,"pow")==0){
 		ReplaceChars(lel->st,rep,with);
@@ -215,6 +218,7 @@ double Sum(struct TNod *radacina){
 		
 
 		//Inlcouire variabila cu valoarea lui i
+//		#pragma omp parallel
 		ReplaceChars(aux, rep, buffer);
 		free(rep);
 		sum += PrelucrareArbore(aux->dr);
@@ -247,6 +251,7 @@ double Prod(struct TNod *radacina){
 		
 
 		//Inlcouire variabila cu valoarea lui i
+//		#pragma omp parallel
 		ReplaceChars(aux, rep, buffer);
 		free(rep);
 		prod *= PrelucrareArbore(aux->dr);

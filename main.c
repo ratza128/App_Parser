@@ -100,8 +100,10 @@ void ConstrArbPref (TArb *a,VctStr sir[40],int *p,int *k)   /* Functie de constr
 		&& (sir[(*p)].str[0] != '>' ) ) /* Daca s-a gasit operator */
       { 
         (*a)=(TNod*)malloc(sizeof(TNod));              /* Alocam spatiu pentru un nod si il completam */
+
         if ( !(*a) )
            return;
+	(*a)->rez = (double*)malloc(sizeof(double));
         ((*a)->info)=sir[(*p)].str;
         (*p)++;
         ConstrArbPref(&((*a))->st,sir,p,k);            /* Construim subarbore stang */
@@ -112,9 +114,11 @@ void ConstrArbPref (TArb *a,VctStr sir[40],int *p,int *k)   /* Functie de constr
     if(strcmp(sir[(*p)].str, "sqrt") == 0
 		|| strcmp(sir[(*p)].str, "pow") == 0 ){
     	(*a)=(TNod*)malloc(sizeof(TNod));              /* Alocam spatiu pentru un nod si il completam */
-        if ( !(*a) )
+	
+	if ( !(*a) )
            return;
-        ((*a)->info)=sir[(*p)].str;
+	(*a)->rez = (double*)malloc(sizeof(double));        
+	((*a)->info)=sir[(*p)].str;
         (*p)++;
 	    ConstrArbPref(&((*a))->st,sir,p,k);            /* Construim subarbore stang */
 	    ConstrArbPref(&((*a))->dr,sir,p,k);
@@ -124,9 +128,11 @@ void ConstrArbPref (TArb *a,VctStr sir[40],int *p,int *k)   /* Functie de constr
     if(strcmp(sir[(*p)].str, "sum") == 0 
 		|| strcmp(sir[(*p)].str, "prod") == 0){
     	(*a)=(TNod*)malloc(sizeof(TNod));              /* Alocam spatiu pentru un nod si il completam */
-        if ( !(*a) )
+        
+	if ( !(*a) )
            return;
-        ((*a)->info)=sir[(*p)].str;
+  	(*a)->rez = (double*)malloc(sizeof(double));      
+  	((*a)->info)=sir[(*p)].str;
         (*p)++;
         ((*a)->start)=atol(sir[(*p)].str);
         (*p)++;
@@ -349,7 +355,8 @@ int main(int argc, char*argv[])
                                    ConstrArbPref(&(varb[t]),sirn,&p,&k);
                                    printf("\n");
                                    AfiArb(varb[t]);
-                                   printf("%lf\n",PrelucrareArbore(varb[t]));
+					PrelucrareArbore(varb[t]);
+                                   printf("%lf\n",*(varb[t]->rez));
 
                                    t++;
                                    

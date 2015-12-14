@@ -9,7 +9,7 @@ typedef char* TInfo;
 typedef struct TNod 
 { TInfo info;
   struct TNod *st, *dr;
-  long int rezultat;
+  double *rez;
   char var;
   int start, end;
 } TNod, *TArb, **AArb;
@@ -32,20 +32,20 @@ typedef struct Tablea          /* Structura pentru tabela cu numele variabilei s
 
 
 
-double Add(struct TNod *stg,struct TNod *drp);
+void Add(struct TNod *stg,struct TNod *drp,struct TNod *lel);
 
-double Sub(struct TNod *stg,struct TNod *drp);
+void Sub(struct TNod *stg,struct TNod *drp,struct TNod *lel);
 
-double Mult(struct TNod *stg,struct TNod *drp);
+void Mult(struct TNod *stg,struct TNod *drp,struct TNod *lel);
 
-double Divi(struct TNod *stg,struct TNod *drp);
+void Divi(struct TNod *stg,struct TNod *drp,struct TNod *lel);
 
-double SqrtCalc(struct TNod *stg,struct TNod *drp);
+void SqrtCalc(struct TNod *stg,struct TNod *drp,struct TNod *lel);
 
-double PowCalc(struct TNod *stg,struct TNod *drp);
+void PowCalc(struct TNod *stg,struct TNod *drp,struct TNod *lel);
 
-double Sum(struct TNod *radacina);
+void Sum(struct TNod *radacina);
 
-double PrelucrareArbore(struct TNod *lel);
+void PrelucrareArbore(struct TNod *lel);
 
 void ReplaceChars(struct TNod*, char*, char*);

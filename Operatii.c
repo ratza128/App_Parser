@@ -10,145 +10,106 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-//#include <omp.h>
+#include <omp.h>
 
 #include "Operatii.h"
 
-double Add(struct TNod *stg,struct TNod *drp)
+void Add(struct TNod *stg,struct TNod *drp, struct TNod *lel)
 {
 	double a,b;
 
-	a=PrelucrareArbore(stg);
-	b=PrelucrareArbore(drp);
+	PrelucrareArbore(stg);
+	PrelucrareArbore(drp);
+	a = *(stg->rez);
+	b = *(drp->rez);
+	
 
-	return a+b;
+	*(lel->rez) = a+b;
+}
+
+
+void Sub(struct TNod *stg,struct TNod *drp,struct TNod *lel)
+{
+	double a,b;
+
+	PrelucrareArbore(stg);
+	PrelucrareArbore(drp);
+	a = *(stg->rez);
+	b = *(drp->rez);
+	
+	*(lel->rez) = a-b;
+
+}
+
+void Mult(struct TNod *stg,struct TNod *drp,struct TNod *lel)
+{
+	double a,b;
+
+	PrelucrareArbore(stg);
+	PrelucrareArbore(drp);
+	a = *(stg->rez);
+	b = *(drp->rez);
+	*(lel->rez) = a*b;
 
 }
 
 
-double Sub(struct TNod *stg,struct TNod *drp)
+void Divi(struct TNod *stg,struct TNod *drp,struct TNod *lel)
 {
 	double a,b;
 
-	a=PrelucrareArbore(stg);
-	b=PrelucrareArbore(drp);
-	
-	return a-b;
-
-}
-
-double Mult(struct TNod *stg,struct TNod *drp)
-{
-	double a,b;
-
-	a=PrelucrareArbore(stg);
-	b=PrelucrareArbore(drp);
-	
-	return a*b;
-
-}
-
-
-double Divi(struct TNod *stg,struct TNod *drp)
-{
-	double a,b;
-
-	a=PrelucrareArbore(stg);
-	b=PrelucrareArbore(drp);
-	
-	return a/b;
+	PrelucrareArbore(stg);
+	PrelucrareArbore(drp);
+	a = *(stg->rez);
+	b = *(drp->rez);
+	*(lel->rez) = a/b;
 
 }
 
 
 //ordin 2 
-double SqrtCalc(struct TNod *stg,struct TNod *drp)
+void SqrtCalc(struct TNod *stg,struct TNod *drp,struct TNod *lel)
 {
 	double a,b;
-
-	//a=PrelucrareArbore(stg);
-	b=PrelucrareArbore(stg);
 	
-	return sqrt(b);
+	//a=PrelucrareArbore(stg);
+	PrelucrareArbore(stg);
+printf("asdsad\n");
+	b = *(stg->rez);
+	*(lel->rez) = sqrt(b);
 
 }
 
 
 //stanga este baza iar drp este puterea
-double PowCalc(struct TNod *stg,struct TNod *drp)
+void PowCalc(struct TNod *stg,struct TNod *drp,struct TNod *lel)
 {
 	double a,b;
 
-	a=PrelucrareArbore(stg);
-	b=PrelucrareArbore(drp);
-	
-	return pow(a,b);
+	PrelucrareArbore(stg);
+	PrelucrareArbore(drp);
+	a = *(stg->rez);
+	b = *(drp->rez);
+	*(lel->rez) = pow(a,b);
 
 }
-
-char *str_replace(char *orig, char *rep, char *with) {
-    char *result; // the return string
-    char *ins;    // the next insert point
-    char *tmp;    // varies
-    int len_rep;  // length of rep
-    int len_with; // length of with
-    int len_front; // distance between rep and end of last rep
-    int count;    // number of replacements
-
-    if (!orig)
-        return NULL;
-    if (!rep)
-        rep = "";
-    len_rep = strlen(rep);
-    if (!with)
-        with = "";
-    len_with = strlen(with);
-
-    ins = orig;
-    for (count = 0; tmp = strstr(ins, rep); ++count) {
-        ins = tmp + len_rep;
-    }
-
-    // first time through the loop, all the var are set correctly
-    // from here on,
-    //    tmp points to the end of the result string
-    //    ins points to the next occurrence of rep in orig
-    //    orig points to the remainder of orig after "end of rep"
-    tmp = result = malloc(strlen(orig) + (len_with - len_rep) * count + 1);
-
-    if (!result)
-        return NULL;
-
-    while (count--) {
-        ins = strstr(orig, rep);
-        len_front = ins - orig;
-        tmp = strncpy(tmp, orig, len_front) + len_front;
-        tmp = strcpy(tmp, with) + len_with;
-        orig += len_front + len_rep; // move to next "end of rep"
-    }
-    strcpy(tmp, orig);
-    return result;
-}
-
 
 void ReplaceChars(struct TNod *lel, char* rep, char* with){
 	
 	char* a = lel->info;
-//	#pragma omp single
-//	{
+	
+	
 	if(strcmp(a, rep)==0){
 		memset(lel->info,0,sizeof(lel->info));
 		strcpy(lel->info, with);
-		return;
-	}
-//	}
-
-	if(strcmp(a,"+")==0 || strcmp(a,"-")==0 || strcmp(a,"*")==0 || strcmp(a,"/")==0 || strcmp(a,"sqrt")==0 || strcmp(a,"pow")==0){
+		
+	}else if(strcmp(a,"+")==0 || strcmp(a,"-")==0 || strcmp(a,"*")==0 || strcmp(a,"/")==0 || strcmp(a,"sqrt")==0 || strcmp(a,"pow")==0){
 		ReplaceChars(lel->st,rep,with);
 		ReplaceChars(lel->dr,rep,with);
 	}else if(strcmp(a,"sum")==0 || strcmp(a,"prod")==0){
 		ReplaceChars(lel->dr,rep,with);
 	}
+
 }
 
 void FreeArb(struct TNod *radacina){
@@ -156,8 +117,8 @@ void FreeArb(struct TNod *radacina){
 
 	FreeArb(radacina->st);
 	FreeArb(radacina->dr);
-	if(radacina->msg != NULL)
-		free(radacina->msg);
+	if(radacina->info != NULL)
+		free(radacina->info);
 	radacina->info = NULL;
 
 	free(radacina);
@@ -176,7 +137,7 @@ struct TNod* ClonareArb(struct TNod *radacina){
 	strcpy(msg,radacina->info);
 	newNode->info = msg;
 	
-	newNode->rezultat = radacina->rezultat;
+	newNode->rez = (double*)malloc(sizeof(double));
 	newNode->var = radacina->var;
 	newNode->start = radacina->start;
 	newNode->end = radacina->end;
@@ -190,7 +151,7 @@ struct TNod* ClonareArb(struct TNod *radacina){
 	return newNode;
 }
 
-double Sum(struct TNod *radacina){
+void Sum(struct TNod *radacina){
 	struct TNod* stg = radacina->st;
 	struct TNod* drp = radacina->dr;
 	
@@ -218,15 +179,20 @@ double Sum(struct TNod *radacina){
 		
 
 		//Inlcouire variabila cu valoarea lui i
-//		#pragma omp parallel
+		
 		ReplaceChars(aux, rep, buffer);
 		free(rep);
-		sum += PrelucrareArbore(aux->dr);
+		PrelucrareArbore(aux->dr);
+		printf("arb = %lf\n",*(aux->dr->rez));
+		sum += *(aux->dr->rez);
 	}
-	return sum;
+	//return sum;
+	printf("after\n");
+	*(radacina->rez) += sum;
+	printf("before %lf\n",*(radacina->rez));
 }
 
-double Prod(struct TNod *radacina){
+void Prod(struct TNod *radacina){
 	struct TNod* stg = radacina->st;
 	struct TNod* drp = radacina->dr;
 	
@@ -254,36 +220,38 @@ double Prod(struct TNod *radacina){
 //		#pragma omp parallel
 		ReplaceChars(aux, rep, buffer);
 		free(rep);
-		prod *= PrelucrareArbore(aux->dr);
+		PrelucrareArbore(aux->dr);
+		prod *= *(aux->dr->rez);
 	}
 	
-	return prod;
+	//return prod;
+	*(radacina->rez) = prod;
 }
 
-double PrelucrareArbore(struct TNod *lel){
+void PrelucrareArbore(struct TNod *lel){
 
 	char * a=lel->info;
-	double rez = 0;
+	
 	if(strcmp(a,"+")==0){
-		rez=Add(lel->st,lel->dr);
+		Add(lel->st,lel->dr,lel);
 	}else if(strcmp(a,"-")==0){
-		rez=Sub(lel->st,lel->dr);
+		Sub(lel->st,lel->dr,lel);
 	}else if(strcmp(a,"*")==0){
-		rez=Mult(lel->st, lel->dr);
+		Mult(lel->st, lel->dr,lel);
 	}else if(strcmp(a,"/")==0){
-		rez=Divi(lel->st, lel->dr);
+		Divi(lel->st, lel->dr,lel);
 	}else if(strcmp(a,"sum")==0){
-		rez = Sum(lel);
+		Sum(lel);
+		printf("PrelArb %lf\n",*(lel->rez));
 	}else if(strcmp(a,"prod")==0){
-		rez = Prod(lel);
+		Prod(lel);
 	}else if(strcmp(a,"sqrt")==0){
-		rez = SqrtCalc(lel->st,lel->dr);
+		SqrtCalc(lel->st,lel->dr,lel);
 	}else if(strcmp(a,"pow")==0){
-		rez = PowCalc(lel->st, lel->dr);
+		PowCalc(lel->st, lel->dr,lel);
 	}else{
-		rez=(double)atoi(a);
+		*(lel->rez) = (double)atoi(a);
+		printf("ATOI %lf\n",*(lel->rez));
 	}
-	return rez;
 }
-
 

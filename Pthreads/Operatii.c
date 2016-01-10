@@ -2,29 +2,67 @@
 // Am presupus ca PrelucrareArbore are parametru asa
 // gcc fisier -lm -o output ca sa mearga pow si sqrt
 
-
-
-
-
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include <omp.h>
+#include <pthread.h>
 
 #include "Operatii.h"
+
+
+struct param{
+	struct TNod *stg;
+	struct TNod *dr;
+	struct TNod *lel;
+};
+
 
 void Add(struct TNod *stg,struct TNod *drp, struct TNod *lel)
 {
 	double a,b;
+	
+	if(lel->st->rez == NULL){
+		lel->st->rez = (double*)malloc(sizeof(double));
+	}
 
-	PrelucrareArbore(stg);
-	PrelucrareArbore(drp);
-	a = *(stg->rez);
-	b = *(drp->rez);
+	if(lel->dr->rez == NULL){
+		lel->dr->rez = (double*)malloc(sizeof(double));
+	}
+
+	pthread_t thread_id;
+	struct param params;
+	params.lel = lel->st;
+	pthread_create(&(thread_id), NULL, PrelWithThread, &(params));
+	
+
+	pthread_t thread_id2;
+	struct param params2;
+	params2.lel = lel->dr;
+	pthread_create(&(thread_id2), NULL, PrelWithThread, &(params2));
+	
+	pthread_join(thread_id,NULL);
+	
+	pthread_join(thread_id2,NULL);
+
+//	PrelucrareArbore(stg);
+//	PrelucrareArbore(drp);
+	a = *(lel->st->rez);
+	b = *(lel->dr->rez);
 	
 
 	*(lel->rez) = a+b;
+}
+
+void *CalcAdd(void* threadArg){
+	struct param *params = (struct param *)threadArg;
+	
+	struct TNod *stg = (struct TNod*)params->stg;
+	struct TNod *dr = (struct TNod*)params->dr;
+	struct TNod *lel = (struct TNod*)params->lel;
+	
+	Add(stg,dr,lel);
+	
 }
 
 
@@ -32,10 +70,34 @@ void Sub(struct TNod *stg,struct TNod *drp,struct TNod *lel)
 {
 	double a,b;
 
-	PrelucrareArbore(stg);
-	PrelucrareArbore(drp);
-	a = *(stg->rez);
-	b = *(drp->rez);
+	if(lel->st->rez == NULL){
+		lel->st->rez = (double*)malloc(sizeof(double));
+	}
+
+	if(lel->dr->rez == NULL){
+		lel->dr->rez = (double*)malloc(sizeof(double));
+	}
+
+	pthread_t thread_id;
+	struct param params;
+	params.lel = lel->st;
+	pthread_create(&(thread_id), NULL, PrelWithThread, &(params));
+	
+
+	pthread_t thread_id2;
+	struct param params2;
+	params2.lel = lel->dr;
+	pthread_create(&(thread_id2), NULL, PrelWithThread, &(params2));
+	
+	pthread_join(thread_id,NULL);
+	
+	pthread_join(thread_id2,NULL);
+
+
+	//PrelucrareArbore(stg);
+	//PrelucrareArbore(drp);
+	a = *(lel->st->rez);
+	b = *(lel->dr->rez);
 	
 	*(lel->rez) = a-b;
 
@@ -45,10 +107,33 @@ void Mult(struct TNod *stg,struct TNod *drp,struct TNod *lel)
 {
 	double a,b;
 
-	PrelucrareArbore(stg);
-	PrelucrareArbore(drp);
-	a = *(stg->rez);
-	b = *(drp->rez);
+	if(lel->st->rez == NULL){
+		lel->st->rez = (double*)malloc(sizeof(double));
+	}
+
+	if(lel->dr->rez == NULL){
+		lel->dr->rez = (double*)malloc(sizeof(double));
+	}
+
+	pthread_t thread_id;
+	struct param params;
+	params.lel = lel->st;
+	pthread_create(&(thread_id), NULL, PrelWithThread, &(params));
+	
+
+	pthread_t thread_id2;
+	struct param params2;
+	params2.lel = lel->dr;
+	pthread_create(&(thread_id2), NULL, PrelWithThread, &(params2));
+	
+	pthread_join(thread_id,NULL);
+	
+	pthread_join(thread_id2,NULL);
+
+	//PrelucrareArbore(stg);
+	//PrelucrareArbore(drp);
+	a = *(lel->st->rez);
+	b = *(lel->dr->rez);
 	*(lel->rez) = a*b;
 
 }
@@ -58,10 +143,34 @@ void Divi(struct TNod *stg,struct TNod *drp,struct TNod *lel)
 {
 	double a,b;
 
-	PrelucrareArbore(stg);
-	PrelucrareArbore(drp);
-	a = *(stg->rez);
-	b = *(drp->rez);
+
+	if(lel->st->rez == NULL){
+		lel->st->rez = (double*)malloc(sizeof(double));
+	}
+
+	if(lel->dr->rez == NULL){
+		lel->dr->rez = (double*)malloc(sizeof(double));
+	}
+
+	pthread_t thread_id;
+	struct param params;
+	params.lel = lel->st;
+	pthread_create(&(thread_id), NULL, PrelWithThread, &(params));
+	
+
+	pthread_t thread_id2;
+	struct param params2;
+	params2.lel = lel->dr;
+	pthread_create(&(thread_id2), NULL, PrelWithThread, &(params2));
+	
+	pthread_join(thread_id,NULL);
+	
+	pthread_join(thread_id2,NULL);
+
+	//PrelucrareArbore(stg);
+	//PrelucrareArbore(drp);
+	a = *(lel->st->rez);
+	b = *(lel->dr->rez);
 	*(lel->rez) = a/b;
 
 }
@@ -74,7 +183,7 @@ void SqrtCalc(struct TNod *stg,struct TNod *drp,struct TNod *lel)
 	
 	//a=PrelucrareArbore(stg);
 	PrelucrareArbore(stg);
-printf("asdsad\n");
+//printf("asdsad\n");
 	b = *(stg->rez);
 	*(lel->rez) = sqrt(b);
 
@@ -86,10 +195,33 @@ void PowCalc(struct TNod *stg,struct TNod *drp,struct TNod *lel)
 {
 	double a,b;
 
-	PrelucrareArbore(stg);
-	PrelucrareArbore(drp);
-	a = *(stg->rez);
-	b = *(drp->rez);
+	if(lel->st->rez == NULL){
+		lel->st->rez = (double*)malloc(sizeof(double));
+	}
+
+	if(lel->dr->rez == NULL){
+		lel->dr->rez = (double*)malloc(sizeof(double));
+	}
+
+	pthread_t thread_id;
+	struct param params;
+	params.lel = lel->st;
+	pthread_create(&(thread_id), NULL, PrelWithThread, &(params));
+	
+
+	pthread_t thread_id2;
+	struct param params2;
+	params2.lel = lel->dr;
+	pthread_create(&(thread_id2), NULL, PrelWithThread, &(params2));
+	
+	pthread_join(thread_id,NULL);
+	
+	pthread_join(thread_id2,NULL);
+
+//	PrelucrareArbore(stg);
+//	PrelucrareArbore(drp);
+	a = *(lel->st->rez);
+	b = *(lel->dr->rez);
 	*(lel->rez) = pow(a,b);
 
 }
@@ -230,7 +362,7 @@ void Prod(struct TNod *radacina){
 void PrelucrareArbore(struct TNod *lel){
 
 	char * a=lel->info;
-	
+
 	if(strcmp(a,"+")==0){
 		Add(lel->st,lel->dr,lel);
 	}else if(strcmp(a,"-")==0){
@@ -252,5 +384,42 @@ void PrelucrareArbore(struct TNod *lel){
 		*(lel->rez) = (double)atoi(a);
 		//printf("ATOI %lf\n",*(lel->rez));
 	}
+}
+
+void *PrelWithThread(void* threadArg){
+
+	struct param *params = (struct param *)threadArg;
+	
+	struct TNod *stg = (struct TNod*)params->stg;
+	struct TNod *dr = (struct TNod*)params->dr;
+	struct TNod *lel = (struct TNod*)params->lel;
+	
+	char * a=lel->info;
+	printf("%s\n",a);
+
+	if(strcmp(a,"+")==0){
+		Add(lel->st,lel->dr,lel);
+	}else if(strcmp(a,"-")==0){
+		Sub(lel->st,lel->dr,lel);
+	}else if(strcmp(a,"*")==0){
+		Mult(lel->st, lel->dr,lel);
+	}else if(strcmp(a,"/")==0){
+		Divi(lel->st, lel->dr,lel);
+	}else if(strcmp(a,"sum")==0){
+		Sum(lel);
+		//printf("PrelArb %lf\n",*(lel->rez));
+	}else if(strcmp(a,"prod")==0){
+		Prod(lel);
+	}else if(strcmp(a,"sqrt")==0){
+		SqrtCalc(lel->st,lel->dr,lel);
+	}else if(strcmp(a,"pow")==0){
+		PowCalc(lel->st, lel->dr,lel);
+	}else{
+		printf("a = %s lel->rez %i\n", a, lel->rez==NULL);
+		*(lel->rez) = (double)atoi(a);
+		printf("ATOI %lf\n",*(lel->rez));
+	}
+
+
 }
 

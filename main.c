@@ -54,6 +54,7 @@ void Repr(TArb r, int centru, int linie, int dif)
 			  ___/ \___              / \
 			 |         |            |   |                               -*/
 { int k;
+printf("\nInfo = %s, cost = %i\n", r->info, r->cost);
   if (linie > limita) return;
   if (dif <= 1)      /* spatiu de afisare insuficient -> ... */
     { memset(desen[linie]+centru, '.', 5); return; }
@@ -104,7 +105,9 @@ void ConstrArbPref (TArb *a,VctStr sir[40],int *p,int *k)   /* Functie de constr
         if ( !(*a) )
            return;
 	(*a)->rez = (double*)malloc(sizeof(double));
+	(*a)->cost = (int*)malloc(sizeof(int));
         ((*a)->info)=sir[(*p)].str;
+        (*a)->cost = 1;
         (*p)++;
         ConstrArbPref(&((*a))->st,sir,p,k);            /* Construim subarbore stang */
         ConstrArbPref(&((*a))->dr,sir,p,k);            /* Construim subarbore drept */
@@ -117,7 +120,9 @@ void ConstrArbPref (TArb *a,VctStr sir[40],int *p,int *k)   /* Functie de constr
 	
 	if ( !(*a) )
            return;
-	(*a)->rez = (double*)malloc(sizeof(double));        
+	(*a)->rez = (double*)malloc(sizeof(double));       
+	(*a)->cost = (int*)malloc(sizeof(int)); 
+	(*a)->cost = 2;
 	((*a)->info)=sir[(*p)].str;
         (*p)++;
 	    ConstrArbPref(&((*a))->st,sir,p,k);            /* Construim subarbore stang */
@@ -131,7 +136,9 @@ void ConstrArbPref (TArb *a,VctStr sir[40],int *p,int *k)   /* Functie de constr
         
 	if ( !(*a) )
            return;
-  	(*a)->rez = (double*)malloc(sizeof(double));      
+  	(*a)->rez = (double*)malloc(sizeof(double)); 
+	(*a)->cost = (int*)malloc(sizeof(int));    
+	(*a)->cost = 3; 
   	((*a)->info)=sir[(*p)].str;
         (*p)++;
         ((*a)->start)=atol(sir[(*p)].str);
@@ -187,7 +194,8 @@ TArb ConstrFr(TInfo x)     /* -> adresa frunza cu informatia x, sau
 { TArb aux = (TArb)malloc (sizeof(TNod));
   if (!aux) return NULL;
   
-  aux->info = x; aux->st = aux->dr = NULL;
+  aux->info = x; aux->st = aux->dr = NULL; aux->rez= atoi(x) ;
+  aux->cost = 0;
   return aux;
 }
 

@@ -230,6 +230,7 @@ void Prod(struct TNod *radacina){
 void PrelucrareArbore(struct TNod *lel){
 
 	char * a=lel->info;
+	lel->rez = (double*)malloc(sizeof(double));  
 	
 	if(strcmp(a,"+")==0){
 		Add(lel->st,lel->dr,lel);

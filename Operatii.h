@@ -12,6 +12,7 @@ typedef struct TNod
   double *rez;
   char var;
   int start, end;
+  int cost;
 } TNod, *TArb, **AArb;
 
 

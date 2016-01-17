@@ -14,7 +14,6 @@
 #define Ordin(a) (((a)->st != NULL ) + ((a)->dr != NULL))
 
 
-
 /* Cateva functii din laboratoare */
 
 
@@ -81,11 +80,12 @@ void Repr(TArb r, int centru, int linie, int dif)
 
 void AfiArb(TArb r) /*- afiseaza arborele r -*/
 { int j;
-  for (j = 0; j <= limita; j++) memset (desen[j], ' ', 79);
+  #pragma omp parallel private(j)
+   for (j = 0; j <= limita; j++) memset (desen[j], ' ', 79);
   if (!r) printf ("%49s", "-=- Arbore VID -=-");
   else
   { Repr(r,40,0,19); /* preg reprezentare cu centrul in coloana 39 a primei linii */
-    for (j = 0; j <= limita && desen[j][0] == ':'; j++)
+      for (j = 0; j <= limita && desen[j][0] == ':'; j++)
      { desen[j][79] = '\0'; printf("%s\n", desen[j]+1); }
   }
   printf ("\n");
@@ -257,9 +257,8 @@ int main(int argc, char*argv[])
         
          k=0;                      
          in=0;
-         p=0;
-         
-         for (i=0;i<=strlen(sir);i++)      /* Separare prin spatii si construirea unui vector de strings */  
+         p=0; 
+	 for (i=0;i<=strlen(sir);i++)      /* Separare prin spatii si construirea unui vector de strings */  
              {if (sir[i]!= ' ' )
                 {sir2[in]=sir[i];
                  in++;
@@ -282,7 +281,7 @@ int main(int argc, char*argv[])
     
           k1=k;
           k=0;
-          for(i=0;i<k1;i++)           /* Construirea unui vector de strings CORECT. Daca cel anterior putea avea pe o pozitie
+	 for(i=0;i<k1;i++)           /* Construirea unui vector de strings CORECT. Daca cel anterior putea avea pe o pozitie
           ceva de genul acesta: (a+ , acest vector va avea doar nume de variabile, operanzi sau paranteze */
             if ( ( strlen(siro[i].str) != 1 ) && (ispunct(siro[i].str[0])) )
                { 
@@ -346,18 +345,20 @@ int main(int argc, char*argv[])
         /*-----------------------------------------------------------------*/
                         
          if ( arbcon == 0 )  /* Daca nu s-a construit arbore pentru aceasta ecuatie */
-         for(i2=0;i2<k;)     /* Verificare prefixata. Varianta BONUS: verific daca sir[i] e operant */
+         
+	for(i2=0;i2<k;)     /* Verificare prefixata. Varianta BONUS: verific daca sir[i] e operant */
                         if ( (ispunct(sirn[i2].str[0] )) && (sirn[i2].str[0] != '+' ) && (sirn[i2].str[0] != '-' ) && (sirn[i2].str[0] != '*' ) && (sirn[i2].str[0] != '/' )  )
                             i2++;
                         else
                                 if (( sirn[i2].str[0] == '+' ) || (sirn[i2].str[0] == '-' ) || (sirn[i2].str[0] == '*' ) || (sirn[i2].str[0] == '/' ) || ( strcmp( sirn[i2].str, "sqrt") == 0 ) || ( strcmp( sirn[i2].str, "pow") == 0 ) || ( strcmp( sirn[i2].str, "sum") == 0 ) || ( strcmp( sirn[i2].str, "prod") == 0 ) )
                                   {
-                                   ConstrArbPref(&(varb[t]),sirn,&p,&k);
+			           ConstrArbPref(&(varb[t]),sirn,&p,&k);
                                    printf("\n");
                                    AfiArb(varb[t]);
+					omp_init_lock(&lck); 
 					PrelucrareArbore(varb[t]);
                                    printf("%lf\n",*(varb[t]->rez));
-
+					omp_destroy_lock(&lck);
                                    t++;
                                    
                                    arbcon=1;

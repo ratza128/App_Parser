@@ -30,25 +30,32 @@ void Add(struct TNod *stg,struct TNod *drp, struct TNod *lel)
 		lel->dr->rez = (double*)malloc(sizeof(double));
 	}
 
-	pthread_t thread_id;
-	struct param params;
-	params.lel = lel->st;
-	pthread_create(&(thread_id), NULL, PrelWithThread, &(params));
+	if(lel->dr->cost != NULL && *(lel->dr->cost) > 100 && lel->st->cost != NULL && *(lel->st->cost) > 100){
+
+
+		pthread_t thread_id;
+		struct param params;
+		params.lel = lel->st;
+		pthread_create(&(thread_id), NULL, PrelWithThread, &(params));
 	
 
-	pthread_t thread_id2;
-	struct param params2;
-	params2.lel = lel->dr;
-	pthread_create(&(thread_id2), NULL, PrelWithThread, &(params2));
+		pthread_t thread_id2;
+		struct param params2;
+		params2.lel = lel->dr;
+		pthread_create(&(thread_id2), NULL, PrelWithThread, &(params2));
 	
-	pthread_join(thread_id,NULL);
+		pthread_join(thread_id,NULL);
 	
-	pthread_join(thread_id2,NULL);
-
-//	PrelucrareArbore(stg);
-//	PrelucrareArbore(drp);
+		pthread_join(thread_id2,NULL);
+	
+	}else{
+		PrelucrareArbore(stg);
+		PrelucrareArbore(drp);
+	}
 	a = *(lel->st->rez);
 	b = *(lel->dr->rez);
+
+	
 	
 
 	*(lel->rez) = a+b;
@@ -77,7 +84,9 @@ void Sub(struct TNod *stg,struct TNod *drp,struct TNod *lel)
 	if(lel->dr->rez == NULL){
 		lel->dr->rez = (double*)malloc(sizeof(double));
 	}
-
+	
+	if(lel->dr->cost != NULL && *(lel->dr->cost) > 100 && lel->st->cost != NULL && *(lel->st->cost) > 100){
+	
 	pthread_t thread_id;
 	struct param params;
 	params.lel = lel->st;
@@ -93,9 +102,11 @@ void Sub(struct TNod *stg,struct TNod *drp,struct TNod *lel)
 	
 	pthread_join(thread_id2,NULL);
 
+	}else{
 
-	//PrelucrareArbore(stg);
-	//PrelucrareArbore(drp);
+		PrelucrareArbore(stg);
+		PrelucrareArbore(drp);
+	}	
 	a = *(lel->st->rez);
 	b = *(lel->dr->rez);
 	
@@ -115,6 +126,8 @@ void Mult(struct TNod *stg,struct TNod *drp,struct TNod *lel)
 		lel->dr->rez = (double*)malloc(sizeof(double));
 	}
 
+	if(lel->dr->cost != NULL && *(lel->dr->cost) > 100 && lel->st->cost != NULL && *(lel->st->cost) > 100){
+
 	pthread_t thread_id;
 	struct param params;
 	params.lel = lel->st;
@@ -130,8 +143,11 @@ void Mult(struct TNod *stg,struct TNod *drp,struct TNod *lel)
 	
 	pthread_join(thread_id2,NULL);
 
-	//PrelucrareArbore(stg);
-	//PrelucrareArbore(drp);
+	}else{
+
+		PrelucrareArbore(stg);
+		PrelucrareArbore(drp);
+	}	
 	a = *(lel->st->rez);
 	b = *(lel->dr->rez);
 	*(lel->rez) = a*b;
@@ -152,6 +168,8 @@ void Divi(struct TNod *stg,struct TNod *drp,struct TNod *lel)
 		lel->dr->rez = (double*)malloc(sizeof(double));
 	}
 
+	if(lel->dr->cost != NULL && *(lel->dr->cost) > 100 && lel->st->cost != NULL && *(lel->st->cost) > 100){
+
 	pthread_t thread_id;
 	struct param params;
 	params.lel = lel->st;
@@ -166,9 +184,10 @@ void Divi(struct TNod *stg,struct TNod *drp,struct TNod *lel)
 	pthread_join(thread_id,NULL);
 	
 	pthread_join(thread_id2,NULL);
-
-	//PrelucrareArbore(stg);
-	//PrelucrareArbore(drp);
+	}else{
+		PrelucrareArbore(stg);
+		PrelucrareArbore(drp);
+	}
 	a = *(lel->st->rez);
 	b = *(lel->dr->rez);
 	*(lel->rez) = a/b;
@@ -203,6 +222,8 @@ void PowCalc(struct TNod *stg,struct TNod *drp,struct TNod *lel)
 		lel->dr->rez = (double*)malloc(sizeof(double));
 	}
 
+	if(lel->dr->cost != NULL && *(lel->dr->cost) > 100 && lel->st->cost != NULL && *(lel->st->cost) > 100){
+
 	pthread_t thread_id;
 	struct param params;
 	params.lel = lel->st;
@@ -217,9 +238,10 @@ void PowCalc(struct TNod *stg,struct TNod *drp,struct TNod *lel)
 	pthread_join(thread_id,NULL);
 	
 	pthread_join(thread_id2,NULL);
-
-//	PrelucrareArbore(stg);
-//	PrelucrareArbore(drp);
+	}else{
+		PrelucrareArbore(stg);
+		PrelucrareArbore(drp);
+	}
 	a = *(lel->st->rez);
 	b = *(lel->dr->rez);
 	*(lel->rez) = pow(a,b);
@@ -245,14 +267,22 @@ void ReplaceChars(struct TNod *lel, char* rep, char* with){
 }
 
 void FreeArb(struct TNod *radacina){
-	if(radacina == NULL) return;
-
-	FreeArb(radacina->st);
-	FreeArb(radacina->dr);
+	if(radacina == NULL){return;}
+	
+	if(radacina->st!=NULL){
+		FreeArb(radacina->st);}
+	if(radacina->dr!=NULL){
+		FreeArb(radacina->dr);}
 	if(radacina->info != NULL)
 		free(radacina->info);
 	radacina->info = NULL;
-
+	//if(radacina->rez!=NULL)
+	//	free(radacina->rez);
+	radacina->rez = NULL;
+	if(radacina->cost!=NULL)
+		free(radacina->cost);
+	radacina->cost=NULL;
+	
 	free(radacina);
 }
 
@@ -264,18 +294,25 @@ void ClonareArb(struct TNod *radacina, struct TNod* newNode){
 	char* msg = (char*)malloc(sizeof(char) * 15);
 	strcpy(msg,radacina->info);
 	newNode->info = msg;
-	
-	newNode->rez = (double*)malloc(sizeof(double));
+	if(newNode->rez==NULL)
+		newNode->rez = (double*)malloc(sizeof(double));
+	*(newNode->rez) = *(radacina->rez);
 	newNode->var = radacina->var;
 	newNode->start = radacina->start;
 	newNode->end = radacina->end;
+
+	if(newNode->cost==NULL)
+		newNode->cost = (int*)malloc(sizeof(int));
+	*(newNode->cost) = *(radacina->cost);
 	
 	if(radacina->st != NULL){
-		newNode->st = (TArb)malloc (sizeof(TNod));
+		if(newNode->st==NULL)
+			newNode->st = (TArb)malloc (sizeof(TNod));
 		ClonareArb(radacina->st,newNode->st);
 	}
 	if(radacina->dr !=NULL){
-		newNode->dr = (TArb)malloc (sizeof(TNod));
+		if(newNode->dr==NULL)
+			newNode->dr = (TArb)malloc (sizeof(TNod));
 		ClonareArb(radacina->dr,newNode->dr);
 	}
 	return;
@@ -285,8 +322,8 @@ void Sum(struct TNod *radacina){
 	struct TNod* stg = radacina->st;
 	struct TNod* drp = radacina->dr;
 	
-	double start = radacina->start;
-	double end = radacina->end;
+	int start = radacina->start;
+	int end = radacina->end;
 	
 	char variab = radacina->var;
 	
@@ -294,7 +331,51 @@ void Sum(struct TNod *radacina){
 	int i = 0;
 	//Iteram de la start la end si prelucram expresia
 	double sum = 0;
-	//#pragma parallel for shared(start,end) private(i,sum) default(none)
+	struct TNod* aux1;
+	struct TNod* aux2;
+	aux1 = (TArb)malloc (sizeof(TNod));
+	aux2 = (TArb)malloc (sizeof(TNod));
+
+	aux1->start = start;
+	aux1->end = (end - start + 1)/2;
+	aux2->start = (end - start + 1)/2 + 1;
+	aux2->end = end;
+	pthread_t thread_id;
+	struct param params;
+	params.lel = radacina;
+	params.dr = aux1;
+	pthread_create(&(thread_id), NULL, SumWithThread, &(params));
+	
+
+	pthread_t thread_id2;
+	struct param params2;
+	params2.lel = radacina;
+	params2.dr = aux2;
+	pthread_create(&(thread_id2), NULL, SumWithThread, &(params2));
+	
+	pthread_join(thread_id,NULL);
+	
+	pthread_join(thread_id2,NULL);
+
+
+	*(radacina->rez) += *(params2.dr->rez);
+	*(radacina->rez) += *(params.dr->rez);
+	//printf("before %lf\n",*(radacina->rez));
+}
+
+void *SumWithThread(void* threadArg){
+	struct param *params = (struct param *)threadArg;
+	
+	struct TNod *stg = (struct TNod*)params->stg;
+	struct TNod *dr = (struct TNod*)params->dr;
+	struct TNod *lel = (struct TNod*)params->lel;
+
+	int start = dr->start;
+	int end = dr->end;
+	int i;
+	char variab = lel->var;
+	int sum = 0;
+
 	for (i=start; i<=end; i++){
 		char* rep = malloc(sizeof(char));
 		*rep = variab;
@@ -303,60 +384,102 @@ void Sum(struct TNod *radacina){
 		snprintf(buffer, 20,"%i",i);
 		
 		//Clonez lel
-		struct TNod* aux = NULL;
-		aux = (TArb)malloc (sizeof(TNod));
 			
-		ClonareArb(radacina, aux);
+		ClonareArb(lel, dr);
 		
 
 		//Inlcouire variabila cu valoarea lui i
-		
-		ReplaceChars(aux, rep, buffer);
+		ReplaceChars(dr, rep, buffer);
 		free(rep);
-		PrelucrareArbore(aux->dr);
+		PrelucrareArbore(dr->dr);
 		//printf("arb = %lf\n",*(aux->dr->rez));
-		sum += *(aux->dr->rez);
+		sum += *(dr->dr->rez);
+		//FreeArb(aux[i-1]);
 	}
-	//return sum;
-	//printf("after\n");
-	*(radacina->rez) += sum;
-	//printf("before %lf\n",*(radacina->rez));
+	*(dr->rez) = sum;
+
 }
 
 void Prod(struct TNod *radacina){
 	struct TNod* stg = radacina->st;
 	struct TNod* drp = radacina->dr;
 	
-	double start = radacina->start;
-	double end = radacina->end;
+	int start = radacina->start;
+	int end = radacina->end;
 	
 	char variab = radacina->var;
+	
 
 	int i = 0;
 	//Iteram de la start la end si prelucram expresia
 	double prod = 1;
+	struct TNod* aux1;
+	struct TNod* aux2;
+	aux1 = (TArb)malloc (sizeof(TNod));
+	aux2 = (TArb)malloc (sizeof(TNod));
+
+	aux1->start = start;
+	aux1->end = (end - start + 1)/2;
+	aux2->start = (end - start + 1)/2 + 1;
+	aux2->end = end;
+	pthread_t thread_id;
+	struct param params;
+	params.lel = radacina;
+	params.dr = aux1;
+	pthread_create(&(thread_id), NULL, ProdWithThread, &(params));
+	
+
+	pthread_t thread_id2;
+	struct param params2;
+	params2.lel = radacina;
+	params2.dr = aux2;
+	pthread_create(&(thread_id2), NULL, ProdWithThread, &(params2));
+	
+	pthread_join(thread_id,NULL);
+	
+	pthread_join(thread_id2,NULL);
+
+	*(radacina->rez) = 1;
+	*(radacina->rez) *= *(params2.dr->rez);
+	*(radacina->rez) *= *(params.dr->rez);
+	//printf("before %lf\n",*(radacina->rez));
+}
+
+void *ProdWithThread(void* threadArg){
+	struct param *params = (struct param *)threadArg;
+	
+	struct TNod *stg = (struct TNod*)params->stg;
+	struct TNod *dr = (struct TNod*)params->dr;
+	struct TNod *lel = (struct TNod*)params->lel;
+
+	int start = dr->start;
+	int end = dr->end;
+	int i;
+	char variab = lel->var;
+	int prod = 1;
+
 	for (i=start; i<=end; i++){
 		char* rep = malloc(sizeof(char));
 		*rep = variab;
 		char buffer[20];
 		
 		snprintf(buffer, 20,"%i",i);
-
+		
 		//Clonez lel
-		struct TNod* aux = NULL;
-		ClonareArb(radacina,aux);
+			
+		ClonareArb(lel, dr);
 		
 
 		//Inlcouire variabila cu valoarea lui i
-//		#pragma omp parallel
-		ReplaceChars(aux, rep, buffer);
+		ReplaceChars(dr, rep, buffer);
 		free(rep);
-		PrelucrareArbore(aux->dr);
-		prod *= *(aux->dr->rez);
+		PrelucrareArbore(dr->dr);
+		//printf("arb = %lf\n",*(aux->dr->rez));
+		prod *= *(dr->dr->rez);
+		//FreeArb(aux[i-1]);
 	}
-	
-	//return prod;
-	*(radacina->rez) = prod;
+	*(dr->rez) = prod;
+
 }
 
 void PrelucrareArbore(struct TNod *lel){

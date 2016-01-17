@@ -12,6 +12,7 @@ typedef struct TNod
   double *rez;
   char var;
   int start, end;
+  int* cost;
 } TNod, *TArb, **AArb;
 
 
@@ -31,6 +32,10 @@ typedef struct Tablea          /* Structura pentru tabela cu numele variabilei s
 } Tabela;
 
 void *PrelWithThread(void* threadArg);
+
+void *SumWithThread(void* threadArg);
+
+void *ProdWithThread(void* threadArg);
 
 void Add(struct TNod *stg,struct TNod *drp,struct TNod *lel);
 

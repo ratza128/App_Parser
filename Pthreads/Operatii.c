@@ -340,6 +340,8 @@ void Sum(struct TNod *radacina){
 	aux1->end = (end - start + 1)/2;
 	aux2->start = (end - start + 1)/2 + 1;
 	aux2->end = end;
+
+	
 	pthread_t thread_id;
 	struct param params;
 	params.lel = radacina;
@@ -356,7 +358,7 @@ void Sum(struct TNod *radacina){
 	pthread_join(thread_id,NULL);
 	
 	pthread_join(thread_id2,NULL);
-
+	printf("rez %lf rez %lf\n",*(params2.dr->rez),*(params.dr->rez));
 
 	*(radacina->rez) += *(params2.dr->rez);
 	*(radacina->rez) += *(params.dr->rez);
@@ -374,7 +376,7 @@ void *SumWithThread(void* threadArg){
 	int end = dr->end;
 	int i;
 	char variab = lel->var;
-	int sum = 0;
+	double sum = 0;
 
 	for (i=start; i<=end; i++){
 		char* rep = malloc(sizeof(char));
@@ -456,7 +458,7 @@ void *ProdWithThread(void* threadArg){
 	int end = dr->end;
 	int i;
 	char variab = lel->var;
-	int prod = 1;
+	double prod = 1;
 
 	for (i=start; i<=end; i++){
 		char* rep = malloc(sizeof(char));
@@ -518,7 +520,7 @@ void *PrelWithThread(void* threadArg){
 	struct TNod *lel = (struct TNod*)params->lel;
 	
 	char * a=lel->info;
-	printf("%s\n",a);
+	//printf("%s\n",a);
 
 	if(strcmp(a,"+")==0){
 		Add(lel->st,lel->dr,lel);
@@ -538,9 +540,9 @@ void *PrelWithThread(void* threadArg){
 	}else if(strcmp(a,"pow")==0){
 		PowCalc(lel->st, lel->dr,lel);
 	}else{
-		printf("a = %s lel->rez %i\n", a, lel->rez==NULL);
+		//printf("a = %s lel->rez %i\n", a, lel->rez==NULL);
 		*(lel->rez) = (double)atoi(a);
-		printf("ATOI %lf\n",*(lel->rez));
+		//printf("ATOI %lf\n",*(lel->rez));
 	}
 
 

@@ -30,6 +30,7 @@ typedef struct Tablea          /* Structura pentru tabela cu numele variabilei s
   int val;
 } Tabela;
 
+omp_lock_t lck;
 
 
 void Add(struct TNod *stg,struct TNod *drp,struct TNod *lel);

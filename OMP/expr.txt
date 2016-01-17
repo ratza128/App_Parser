@@ -1,1 +1,1 @@
-< sqrt < sum 1 1000 i < sum 1 5 j < + i j > > > 2 >
+< prod 1 20 i < + i 1 > >

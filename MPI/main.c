@@ -14,7 +14,25 @@
 #define Interior(a) (((a)->st != NULL ) || ((a)->dr !=NULL))
 #define Ordin(a) (((a)->st != NULL ) + ((a)->dr != NULL))
 
+int timeval_subtract(struct timeval *result, struct timeval *t2, struct timeval *t1)
+{
+    long int diff = (t2->tv_usec + 1000000 * t2->tv_sec) - (t1->tv_usec + 1000000 * t1->tv_sec);
+    result->tv_sec = diff / 1000000;
+    result->tv_usec = diff % 1000000;
 
+    return (diff<0);
+}
+
+void timeval_print(struct timeval *tv)
+{
+    char buffer[30];
+    time_t curtime;
+
+    printf("%ld.%06ld", tv->tv_sec, tv->tv_usec);
+    curtime = tv->tv_sec;
+    strftime(buffer, 30, "%m-%d-%Y  %T", localtime(&curtime));
+    printf(" = %s.%06ld\n", buffer, tv->tv_usec);
+}
 
 /* Cateva functii din laboratoare */
 
@@ -246,14 +264,19 @@ int main(int argc, char*argv[])
   char op1[20], op2[20], op3[20],op4[20];
   
   int rank = 0;
-  int comm_size = 0;
-
+  int comm_size = 0; 
+  struct timeval tvBegin, tvEnd, tvDiff;
+  
   MPI_Status status;
   MPI_Init(&argc, &argv);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &comm_size);
   
   int auxComm = comm_size;
+  
+  if(rank == 0){
+  	gettimeofday(&tvBegin, NULL);
+  }
   
   if(rank == 0){
 	  f=fopen(argv[1],"rt");               /*Deschidere fisier si verificare */
@@ -269,7 +292,10 @@ int main(int argc, char*argv[])
               /* Cat timp se citeste ecuatie din fisier */
         {
         if(rank == 0){
-	  	if(!fgets(sir,80,f) != 0){
+        
+        	int succes = fgets(sir,80,f);
+        	
+	  	if(!succes){
 	  		
 	  		for (i=1; i<=auxComm-1; i++)
 			{  	
@@ -285,9 +311,7 @@ int main(int argc, char*argv[])
 	}
 	else{
 		MPI_Recv(&sir, sizeof(sir), MPI_CHAR, 0, 0, MPI_COMM_WORLD, &status);
-         	
          	if(strcmp(sir,"Done") == 0){
-         	 return 0;
          		break;
          	}
 	}
@@ -397,8 +421,9 @@ int main(int argc, char*argv[])
                                     AfiArb(varb[t]);
 				   }
 				   
+					   		
 				   // Logica pentru 2 procese
-				   if(comm_size == 2){
+				   if(auxComm == 2){
 				   
 				   	   if(rank == 0){
 					   	
@@ -408,7 +433,6 @@ int main(int argc, char*argv[])
 					 		MPI_Send("Done", 5, MPI_CHAR, 1, 0, MPI_COMM_WORLD);
 					 		PrelucrareArbore(varb[t]);
 							printf("%lf\n",*(varb[t]->rez));
-							  	
 					   	}       
 					   	else{
 					   		MPI_Send( "Ok", 5, MPI_CHAR, 1, 0, MPI_COMM_WORLD);
@@ -428,8 +452,8 @@ int main(int argc, char*argv[])
 					 	
 		                           }
 		                           else{
-		                           	char ack[5];
-		                           	MPI_Recv(&ack, 5, MPI_CHAR, 0, 0, MPI_COMM_WORLD, &status);
+		                           	char ack[10];
+		                           	MPI_Recv(&ack, 10, MPI_CHAR, 0, 0, MPI_COMM_WORLD, &status);
 		                           	
 		                           	if(strcmp(ack,"Ok") == 0){
 		                           	
@@ -438,14 +462,14 @@ int main(int argc, char*argv[])
 			
 							ClonareArb(varb[t]->st, aux);
 			                   	        PrelucrareArbore(aux);
-				                   	   
+				                   	 
 						        MPI_Send(&(*(aux->rez)), sizeof(double), MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
 				                }
 		                           }
 				   }
 				   
 				   // Logica pentru 4 procese
-				     if(comm_size == 4){
+				     if(auxComm == 4){
 				   
 				   	   if(rank == 0){
 					   	
@@ -460,12 +484,12 @@ int main(int argc, char*argv[])
 					 		
 					 		PrelucrareArbore(varb[t]);
 							printf("%lf\n",*(varb[t]->rez));
-							  	
 					   	}       
 					   	else{
 					   		MPI_Send( "Ok", 5, MPI_CHAR, 2, 0, MPI_COMM_WORLD);
 					   		if(strcmp(op2, "sum") == 0 || strcmp(op2, "prod") == 0 || varb[t]->st->st == NULL){
 					   			MPI_Send( "Done", 5, MPI_CHAR, 1, 0, MPI_COMM_WORLD);
+					   			
 					   			struct TNod* aux = NULL;
 								aux = (TArb)malloc (sizeof(TNod));
 			
@@ -474,10 +498,11 @@ int main(int argc, char*argv[])
 								PrelucrareArbore(aux);
 								double rez;
 								MPI_Recv(&rez, sizeof(double), MPI_DOUBLE, 2, 0, MPI_COMM_WORLD, &status);
-							
+								
 								double finalR;
 								finalR = SimpleRezult( op1, *(aux->rez), rez);
 								printf("Rezultat final = %lf\n",finalR);
+								
 					   		}
 					   		else{
 					   			MPI_Send( "Ok", 5, MPI_CHAR, 1, 0, MPI_COMM_WORLD);
@@ -502,9 +527,15 @@ int main(int argc, char*argv[])
 					 	
 		                           }
 		                           else{
-		                           	char ack[5];
-		                           	MPI_Recv(&ack, 5, MPI_CHAR, 0, 0, MPI_COMM_WORLD, &status);
+		                           	char ack[10];
 		                           	
+		                           if(rank == 3 ){
+		                           	MPI_Recv(&ack, 10, MPI_CHAR, 2, 0, MPI_COMM_WORLD, &status);
+		                           }
+		                           else{
+		                           	MPI_Recv(&ack, 10, MPI_CHAR, 0, 0, MPI_COMM_WORLD, &status);
+	                           	   }
+	                           	   
 		                           	if(strcmp(ack,"Ok") == 0){
 		                           		if(rank == 1){
 								struct TNod* aux = NULL;
@@ -514,6 +545,7 @@ int main(int argc, char*argv[])
 					           	        PrelucrareArbore(aux);
 						           	   
 								MPI_Send(&(*(aux->rez)), sizeof(double), MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
+						        	
 						        }
 						        
 						        if(rank == 2){
@@ -553,6 +585,7 @@ int main(int argc, char*argv[])
 					           	        PrelucrareArbore(aux);
 						           	   
 								MPI_Send(&(*(aux->rez)), sizeof(double), MPI_DOUBLE, 3, 0, MPI_COMM_WORLD);
+						        	
 						        }
 				                }
 		                           }
@@ -574,9 +607,17 @@ int main(int argc, char*argv[])
              if(rank == 0){
           	printf("\n\n\n--------------------------------\n\n\n");
           }
+          
+          
        arbcon=0;
         }   
   
+    if(rank == 0){
+    	gettimeofday(&tvEnd, NULL);
+	    	 
+	    	 timeval_subtract(&tvDiff, &tvEnd, &tvBegin);
+	   	printf("%ld.%06ld\n", tvDiff.tv_sec, tvDiff.tv_usec);
+    }
     MPI_Barrier(MPI_COMM_WORLD);
     MPI_Finalize();
 

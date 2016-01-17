@@ -4,7 +4,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
-
+#include <pthread.h>
 #include "Operatii.c"
 
 #ifndef ARBORE_BINAR
@@ -85,7 +85,7 @@ void AfiArb(TArb r) /*- afiseaza arborele r -*/
   for (j = 0; j <= limita; j++) memset (desen[j], ' ', 79);
   if (!r) printf ("%49s", "-=- Arbore VID -=-");
   else
-  { Repr(r,40,0,19); /* preg reprezentare cu centrul in coloana 39 a primei linii */
+  { Repr(r,50,0,19); /* preg reprezentare cu centrul in coloana 39 a primei linii */
     for (j = 0; j <= limita && desen[j][0] == ':'; j++)
      { desen[j][79] = '\0'; printf("%s\n", desen[j]+1); }
   }
@@ -94,7 +94,7 @@ void AfiArb(TArb r) /*- afiseaza arborele r -*/
 
 
 
-void ConstrArbPref (TArb *a,VctStr sir[40],int *p,int *k)   /* Functie de construire a arborului pentru ecuatii prefixate */
+void ConstrArbPref (TArb *a,VctStr sir[50],int *p,int *k)   /* Functie de construire a arborului pentru ecuatii prefixate */
 {      
 	if ( (ispunct(sir[(*p)].str[0]) ) 
    		&& (sir[(*p)].str[0] != '<' ) 
@@ -120,7 +120,6 @@ void ConstrArbPref (TArb *a,VctStr sir[40],int *p,int *k)   /* Functie de constr
     if(strcmp(sir[(*p)].str, "sqrt") == 0
 		|| strcmp(sir[(*p)].str, "pow") == 0 ){
     	(*a)=(TNod*)malloc(sizeof(TNod));              /* Alocam spatiu pentru un nod si il completam */
-	
 	if ( !(*a) )
            return;
 	(*a)->rez = (double*)malloc(sizeof(double));       
@@ -139,7 +138,6 @@ void ConstrArbPref (TArb *a,VctStr sir[40],int *p,int *k)   /* Functie de constr
     if(strcmp(sir[(*p)].str, "sum") == 0 
 		|| strcmp(sir[(*p)].str, "prod") == 0){
     	(*a)=(TNod*)malloc(sizeof(TNod));              /* Alocam spatiu pentru un nod si il completam */
-        
 	if ( !(*a) )
            return;
   	(*a)->rez = (double*)malloc(sizeof(double)); 
@@ -164,7 +162,7 @@ void ConstrArbPref (TArb *a,VctStr sir[40],int *p,int *k)   /* Functie de constr
  
 
     if ( isalnum(sir[(*p)].str[0]) )                   /* Daca s-a gasit nume de variabila */
-      {
+      {printf("Operator %c\n",sir[(*p)].str[0]);
        (*a)=ConstrFr( (sir[(*p)].str));                /* Construim frunza */
        (*p)++;
        return;
@@ -204,7 +202,7 @@ TArb ConstrFr(TInfo x)     /* -> adresa frunza cu informatia x, sau
   if (!aux) return NULL;
   aux->cost = (int*)malloc(sizeof(int));
 aux->rez = (double*)malloc(sizeof(double));
-  aux->info = x; aux->st = aux->dr = NULL; *(aux->rez)= atoi(x) ;
+  aux->info = x; aux->st = NULL; aux->dr = NULL; //*(aux->rez)= atoi(x) ;
   *(aux->cost) = 0;
   return aux;
 }
@@ -234,7 +232,7 @@ int NrNiv(TArb r)           /* numar niveluri (0 pentru arbore vid) */
   return 1 + (ns >= nd ? ns : nd);
 }
 
-void AfiEc(TArb a,Tabela tab[40],int *k)    /* Functie de afisare a ecuatiei */
+void AfiEc(TArb a,Tabela tab[50],int *k)    /* Functie de afisare a ecuatiei */
 {if (!a) 
    return;
   if ( (a->dr == NULL ) && (a->st==NULL ) )   /* Daca e frunza */
@@ -254,12 +252,12 @@ void AfiEc(TArb a,Tabela tab[40],int *k)    /* Functie de afisare a ecuatiei */
 int main(int argc, char*argv[])
 { TArb arb=NULL,arb2=NULL,arb3=NULL,arbaux=NULL;                  /* Declaratii */
   int p,i,in,k,k1,ind=0,j,alpha,rezultat,i2,ok,t=0,arbcon=0;
-  char sir[80],sir2[5],sir3[5],sir4[5],sir5[5];
+  char sir[100],sir2[5],sir3[5],sir4[5],sir5[5];
   char numef[20];
   VctArb varb;
   FILE* f;
-  VctStr siro[40],sirn[40];
-  Tabela tab[40],tab2[40];
+  VctStr siro[50],sirn[50];
+  Tabela tab[50],tab2[50];
   
   
   f=fopen(argv[1],"rt");               /*Deschidere fisier si verificare */
@@ -270,7 +268,7 @@ int main(int argc, char*argv[])
   else
       printf("\n\n\nFisierul %s s-a deschis cu succes !\n\n\n",argv[1]);
       
-  while ( fgets(sir,80,f) != 0 )            /* Cat timp se citeste ecuatie din fisier */
+  while ( fgets(sir,100,f) != 0 )            /* Cat timp se citeste ecuatie din fisier */
         {printf("\nArborele pentru :  %s",sir);   
         
          k=0;                      

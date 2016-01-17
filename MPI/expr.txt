@@ -1,1 +1,1 @@
-< sqrt < sum 1 10 i < sum 1 5 j < + i j > > > 2 >
+< sum 1 1500 i < sum 1 1400 j  < / < sqrt < pow i 2 > 2 > < sqrt j 2 > > > >

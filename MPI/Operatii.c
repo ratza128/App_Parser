@@ -215,6 +215,8 @@ void Prod(struct TNod *radacina){
 
 		//Clonez lel
 		struct TNod* aux = NULL;
+		aux = (TArb)malloc (sizeof(TNod));
+		
 		ClonareArb(radacina,aux);
 		
 

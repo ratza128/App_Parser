@@ -358,7 +358,7 @@ void Sum(struct TNod *radacina){
 	pthread_join(thread_id,NULL);
 	
 	pthread_join(thread_id2,NULL);
-	printf("rez %lf rez %lf\n",*(params2.dr->rez),*(params.dr->rez));
+	//printf("rez %lf rez %lf\n",*(params2.dr->rez),*(params.dr->rez));
 
 	*(radacina->rez) += *(params2.dr->rez);
 	*(radacina->rez) += *(params.dr->rez);
